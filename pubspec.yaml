@@ -12,12 +12,19 @@ dependencies:
     sdk: flutter
   video_player:
   cupertino_icons: ^1.0.2
+  flutter_bloc:
+  freezed_annotation:
+  get_it:
+  go_router:
 
 dev_dependencies:
+  build_runner:
   flutter_test:
     sdk: flutter
   flutter_lints: ^2.0.0
-
+  freezed:
+  json_serializable:
+  mocktail:
 
 flutter:
 
