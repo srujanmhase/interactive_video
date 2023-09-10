@@ -10,6 +10,12 @@ class SeekerControl extends AppEvent {
   final double position;
 }
 
+class RuntimeBroker extends AppEvent {
+  const RuntimeBroker({required this.position});
+
+  final double position;
+}
+
 class InitializeSession extends AppEvent {}
 
 class ChoiceSelection extends AppEvent {

@@ -18,6 +18,8 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$AppState {
   double get currentPosition => throw _privateConstructorUsedError;
   bool get showChoices => throw _privateConstructorUsedError;
+  int get currentIndex => throw _privateConstructorUsedError;
+  double get currentVideoSeek => throw _privateConstructorUsedError;
   Session? get session => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
@@ -30,7 +32,12 @@ abstract class $AppStateCopyWith<$Res> {
   factory $AppStateCopyWith(AppState value, $Res Function(AppState) then) =
       _$AppStateCopyWithImpl<$Res, AppState>;
   @useResult
-  $Res call({double currentPosition, bool showChoices, Session? session});
+  $Res call(
+      {double currentPosition,
+      bool showChoices,
+      int currentIndex,
+      double currentVideoSeek,
+      Session? session});
 
   $SessionCopyWith<$Res>? get session;
 }
@@ -50,6 +57,8 @@ class _$AppStateCopyWithImpl<$Res, $Val extends AppState>
   $Res call({
     Object? currentPosition = null,
     Object? showChoices = null,
+    Object? currentIndex = null,
+    Object? currentVideoSeek = null,
     Object? session = freezed,
   }) {
     return _then(_value.copyWith(
@@ -61,6 +70,14 @@ class _$AppStateCopyWithImpl<$Res, $Val extends AppState>
           ? _value.showChoices
           : showChoices // ignore: cast_nullable_to_non_nullable
               as bool,
+      currentIndex: null == currentIndex
+          ? _value.currentIndex
+          : currentIndex // ignore: cast_nullable_to_non_nullable
+              as int,
+      currentVideoSeek: null == currentVideoSeek
+          ? _value.currentVideoSeek
+          : currentVideoSeek // ignore: cast_nullable_to_non_nullable
+              as double,
       session: freezed == session
           ? _value.session
           : session // ignore: cast_nullable_to_non_nullable
@@ -88,7 +105,12 @@ abstract class _$$_AppStateCopyWith<$Res> implements $AppStateCopyWith<$Res> {
       __$$_AppStateCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({double currentPosition, bool showChoices, Session? session});
+  $Res call(
+      {double currentPosition,
+      bool showChoices,
+      int currentIndex,
+      double currentVideoSeek,
+      Session? session});
 
   @override
   $SessionCopyWith<$Res>? get session;
@@ -107,6 +129,8 @@ class __$$_AppStateCopyWithImpl<$Res>
   $Res call({
     Object? currentPosition = null,
     Object? showChoices = null,
+    Object? currentIndex = null,
+    Object? currentVideoSeek = null,
     Object? session = freezed,
   }) {
     return _then(_$_AppState(
@@ -118,6 +142,14 @@ class __$$_AppStateCopyWithImpl<$Res>
           ? _value.showChoices
           : showChoices // ignore: cast_nullable_to_non_nullable
               as bool,
+      currentIndex: null == currentIndex
+          ? _value.currentIndex
+          : currentIndex // ignore: cast_nullable_to_non_nullable
+              as int,
+      currentVideoSeek: null == currentVideoSeek
+          ? _value.currentVideoSeek
+          : currentVideoSeek // ignore: cast_nullable_to_non_nullable
+              as double,
       session: freezed == session
           ? _value.session
           : session // ignore: cast_nullable_to_non_nullable
@@ -130,18 +162,26 @@ class __$$_AppStateCopyWithImpl<$Res>
 
 class _$_AppState implements _AppState {
   const _$_AppState(
-      {required this.currentPosition, required this.showChoices, this.session});
+      {required this.currentPosition,
+      required this.showChoices,
+      required this.currentIndex,
+      required this.currentVideoSeek,
+      this.session});
 
   @override
   final double currentPosition;
   @override
   final bool showChoices;
   @override
+  final int currentIndex;
+  @override
+  final double currentVideoSeek;
+  @override
   final Session? session;
 
   @override
   String toString() {
-    return 'AppState(currentPosition: $currentPosition, showChoices: $showChoices, session: $session)';
+    return 'AppState(currentPosition: $currentPosition, showChoices: $showChoices, currentIndex: $currentIndex, currentVideoSeek: $currentVideoSeek, session: $session)';
   }
 
   @override
@@ -153,12 +193,16 @@ class _$_AppState implements _AppState {
                 other.currentPosition == currentPosition) &&
             (identical(other.showChoices, showChoices) ||
                 other.showChoices == showChoices) &&
+            (identical(other.currentIndex, currentIndex) ||
+                other.currentIndex == currentIndex) &&
+            (identical(other.currentVideoSeek, currentVideoSeek) ||
+                other.currentVideoSeek == currentVideoSeek) &&
             (identical(other.session, session) || other.session == session));
   }
 
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, currentPosition, showChoices, session);
+  int get hashCode => Object.hash(runtimeType, currentPosition, showChoices,
+      currentIndex, currentVideoSeek, session);
 
   @JsonKey(ignore: true)
   @override
@@ -171,12 +215,18 @@ abstract class _AppState implements AppState {
   const factory _AppState(
       {required final double currentPosition,
       required final bool showChoices,
+      required final int currentIndex,
+      required final double currentVideoSeek,
       final Session? session}) = _$_AppState;
 
   @override
   double get currentPosition;
   @override
   bool get showChoices;
+  @override
+  int get currentIndex;
+  @override
+  double get currentVideoSeek;
   @override
   Session? get session;
   @override
