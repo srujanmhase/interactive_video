@@ -23,7 +23,7 @@ class Data {
       title: 'Fun',
       mediaLink:
           'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
-      duration: 15,
+      duration: 60,
     );
     final d = Entity(
       uuid: AppUtils.getRandomString(12),

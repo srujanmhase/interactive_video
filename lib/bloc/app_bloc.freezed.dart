@@ -20,6 +20,8 @@ mixin _$AppState {
   bool get showChoices => throw _privateConstructorUsedError;
   int get currentIndex => throw _privateConstructorUsedError;
   double get currentVideoSeek => throw _privateConstructorUsedError;
+  List<double> get breakpoints => throw _privateConstructorUsedError;
+  bool get restartChapter => throw _privateConstructorUsedError;
   Session? get session => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
@@ -37,6 +39,8 @@ abstract class $AppStateCopyWith<$Res> {
       bool showChoices,
       int currentIndex,
       double currentVideoSeek,
+      List<double> breakpoints,
+      bool restartChapter,
       Session? session});
 
   $SessionCopyWith<$Res>? get session;
@@ -59,6 +63,8 @@ class _$AppStateCopyWithImpl<$Res, $Val extends AppState>
     Object? showChoices = null,
     Object? currentIndex = null,
     Object? currentVideoSeek = null,
+    Object? breakpoints = null,
+    Object? restartChapter = null,
     Object? session = freezed,
   }) {
     return _then(_value.copyWith(
@@ -78,6 +84,14 @@ class _$AppStateCopyWithImpl<$Res, $Val extends AppState>
           ? _value.currentVideoSeek
           : currentVideoSeek // ignore: cast_nullable_to_non_nullable
               as double,
+      breakpoints: null == breakpoints
+          ? _value.breakpoints
+          : breakpoints // ignore: cast_nullable_to_non_nullable
+              as List<double>,
+      restartChapter: null == restartChapter
+          ? _value.restartChapter
+          : restartChapter // ignore: cast_nullable_to_non_nullable
+              as bool,
       session: freezed == session
           ? _value.session
           : session // ignore: cast_nullable_to_non_nullable
@@ -110,6 +124,8 @@ abstract class _$$_AppStateCopyWith<$Res> implements $AppStateCopyWith<$Res> {
       bool showChoices,
       int currentIndex,
       double currentVideoSeek,
+      List<double> breakpoints,
+      bool restartChapter,
       Session? session});
 
   @override
@@ -131,6 +147,8 @@ class __$$_AppStateCopyWithImpl<$Res>
     Object? showChoices = null,
     Object? currentIndex = null,
     Object? currentVideoSeek = null,
+    Object? breakpoints = null,
+    Object? restartChapter = null,
     Object? session = freezed,
   }) {
     return _then(_$_AppState(
@@ -150,6 +168,14 @@ class __$$_AppStateCopyWithImpl<$Res>
           ? _value.currentVideoSeek
           : currentVideoSeek // ignore: cast_nullable_to_non_nullable
               as double,
+      breakpoints: null == breakpoints
+          ? _value._breakpoints
+          : breakpoints // ignore: cast_nullable_to_non_nullable
+              as List<double>,
+      restartChapter: null == restartChapter
+          ? _value.restartChapter
+          : restartChapter // ignore: cast_nullable_to_non_nullable
+              as bool,
       session: freezed == session
           ? _value.session
           : session // ignore: cast_nullable_to_non_nullable
@@ -166,7 +192,10 @@ class _$_AppState implements _AppState {
       required this.showChoices,
       required this.currentIndex,
       required this.currentVideoSeek,
-      this.session});
+      required final List<double> breakpoints,
+      required this.restartChapter,
+      this.session})
+      : _breakpoints = breakpoints;
 
   @override
   final double currentPosition;
@@ -176,12 +205,22 @@ class _$_AppState implements _AppState {
   final int currentIndex;
   @override
   final double currentVideoSeek;
+  final List<double> _breakpoints;
+  @override
+  List<double> get breakpoints {
+    if (_breakpoints is EqualUnmodifiableListView) return _breakpoints;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_breakpoints);
+  }
+
+  @override
+  final bool restartChapter;
   @override
   final Session? session;
 
   @override
   String toString() {
-    return 'AppState(currentPosition: $currentPosition, showChoices: $showChoices, currentIndex: $currentIndex, currentVideoSeek: $currentVideoSeek, session: $session)';
+    return 'AppState(currentPosition: $currentPosition, showChoices: $showChoices, currentIndex: $currentIndex, currentVideoSeek: $currentVideoSeek, breakpoints: $breakpoints, restartChapter: $restartChapter, session: $session)';
   }
 
   @override
@@ -197,12 +236,23 @@ class _$_AppState implements _AppState {
                 other.currentIndex == currentIndex) &&
             (identical(other.currentVideoSeek, currentVideoSeek) ||
                 other.currentVideoSeek == currentVideoSeek) &&
+            const DeepCollectionEquality()
+                .equals(other._breakpoints, _breakpoints) &&
+            (identical(other.restartChapter, restartChapter) ||
+                other.restartChapter == restartChapter) &&
             (identical(other.session, session) || other.session == session));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, currentPosition, showChoices,
-      currentIndex, currentVideoSeek, session);
+  int get hashCode => Object.hash(
+      runtimeType,
+      currentPosition,
+      showChoices,
+      currentIndex,
+      currentVideoSeek,
+      const DeepCollectionEquality().hash(_breakpoints),
+      restartChapter,
+      session);
 
   @JsonKey(ignore: true)
   @override
@@ -217,6 +267,8 @@ abstract class _AppState implements AppState {
       required final bool showChoices,
       required final int currentIndex,
       required final double currentVideoSeek,
+      required final List<double> breakpoints,
+      required final bool restartChapter,
       final Session? session}) = _$_AppState;
 
   @override
@@ -227,6 +279,10 @@ abstract class _AppState implements AppState {
   int get currentIndex;
   @override
   double get currentVideoSeek;
+  @override
+  List<double> get breakpoints;
+  @override
+  bool get restartChapter;
   @override
   Session? get session;
   @override

@@ -7,6 +7,8 @@ class AppState with _$AppState {
     required bool showChoices,
     required int currentIndex,
     required double currentVideoSeek,
+    required List<double> breakpoints,
+    required bool restartChapter,
     Session? session,
   }) = _AppState;
 }

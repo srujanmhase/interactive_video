@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:interactive_video/data/data.dart';
@@ -16,6 +18,8 @@ class AppBloc extends Bloc<AppEvent, AppState> {
             showChoices: false,
             currentIndex: 0,
             currentVideoSeek: 0,
+            breakpoints: [],
+            restartChapter: false,
           ),
         ) {
     on<InitializeSession>(
@@ -38,66 +42,46 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       //Check if video complete and play the next one
       final currentEntities = List.of(state.session?.entities ?? <Entity>[]);
 
-      // final currentEntities = List.of(state.session?.entities ?? <Entity>[]);
-
-      var breakpoints = <double>[];
-
-      for (int i = 0; i < currentEntities.length; i++) {
-        breakpoints.add((i + 1) * currentEntities[i].duration);
-      }
-
       double totaltime = currentVideoSeek +
-          (state.currentIndex == 0 ? 0 : breakpoints[state.currentIndex - 1]);
+          (state.currentIndex == 0
+              ? 0
+              : state.breakpoints[state.currentIndex - 1]);
 
       return emit(state.copyWith(
         currentPosition: totaltime,
         showChoices:
             currentVideoSeek == currentEntities[state.currentIndex].duration,
         currentVideoSeek: currentVideoSeek,
-        session: state.session?.copyWith(
-          duration: (state.session?.duration ?? 0) < breakpoints.last
-              ? breakpoints.last
-              : (state.session?.duration ?? 0),
-        ),
       ));
     });
 
-    on<SeekerControl>((event, emit) {
-      // Update seek UI
-      // Check which video that would send the user to & update seek position of the then active video
-
-      final currentEntities = List.of(state.session?.entities ?? <Entity>[]);
-
-      var breakpoints = <double>[];
-
-      for (int i = 0; i < currentEntities.length; i++) {
-        breakpoints.add((i + 1) * currentEntities[i].duration);
-      }
-
-      int currentIndex = 0;
-
-      for (int i = 0; i < breakpoints.length; i++) {
-        if (event.position <= breakpoints[i]) {
-          currentIndex = i;
-          break;
-        }
-      }
-
-      final newPosition =
-          event.position > breakpoints.last ? breakpoints.last : event.position;
-
-      emit(
+    on<RestartSession>((event, emit) {
+      return emit(
         state.copyWith(
-          currentPosition: newPosition,
-          currentIndex: currentIndex,
-          currentVideoSeek: currentIndex > 0
-              ? newPosition - breakpoints[currentIndex - 1]
-              : newPosition,
-          showChoices:
-              (currentEntities[currentIndex].choices ?? <Entity>[]).isNotEmpty
-                  ? (breakpoints[currentIndex] - newPosition == 5 ||
-                      newPosition == breakpoints.last)
-                  : false,
+          currentPosition: 0,
+          showChoices: false,
+          currentIndex: 0,
+          currentVideoSeek: 0,
+          breakpoints: [],
+          restartChapter: false,
+          session: dataRepository.fetchCreateSession(),
+        ),
+      );
+    });
+
+    on<RestartChapter>((event, emit) {
+      return emit(state.copyWith(restartChapter: event.val));
+    });
+
+    on<GoPreviousChapter>((event, emit) {
+      final currentEntities = List.of(state.session?.entities ?? <Entity>[]);
+      currentEntities.removeLast();
+      return emit(
+        state.copyWith(
+          session: state.session?.copyWith(entities: currentEntities),
+          currentIndex: state.currentIndex > 0
+              ? state.currentIndex - 1
+              : state.currentIndex,
         ),
       );
     });
@@ -128,7 +112,13 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       var breakpoints = <double>[];
 
       for (int i = 0; i < currentEntities.length; i++) {
-        breakpoints.add((i + 1) * currentEntities[i].duration);
+        if (i == 0) {
+          breakpoints.add(currentEntities[i].duration);
+        } else {
+          breakpoints.add(
+            currentEntities[i - 1].duration + currentEntities[i].duration,
+          );
+        }
       }
 
       int currentIndex = 0;
@@ -140,20 +130,29 @@ class AppBloc extends Bloc<AppEvent, AppState> {
         }
       }
 
-      print('breakpoints: $breakpoints, pos: $pos');
-
-      print('length: ${currentEntities.length}, index: ${currentIndex + 1}');
-      print('//');
       currentEntities.add(event.entity);
 
-      print('length: ${currentEntities.length}, index: ${currentIndex + 1}');
+      double duration = 0;
+
+      for (int i = 0; i < currentEntities.length; i++) {
+        duration += currentEntities[i].duration;
+      }
+
+      if (currentEntities.last.choices?.isNotEmpty ?? false) {
+        duration += min(currentEntities.last.choices?.first.duration ?? 0,
+            currentEntities.last.choices?.last.duration ?? 0);
+      }
 
       return emit(
         state.copyWith(
           showChoices: false,
           currentVideoSeek: 0,
           currentIndex: currentIndex + 1,
+          breakpoints: breakpoints,
           session: state.session?.copyWith(
+            duration: duration > (state.session?.duration ?? 0)
+                ? duration
+                : (state.session?.duration ?? 0),
             entities: List.of(currentEntities),
           ),
         ),

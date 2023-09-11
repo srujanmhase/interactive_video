@@ -4,11 +4,14 @@ class AppEvent {
   const AppEvent();
 }
 
-class SeekerControl extends AppEvent {
-  const SeekerControl({required this.position});
+class RestartSession extends AppEvent {}
 
-  final double position;
+class RestartChapter extends AppEvent {
+  const RestartChapter({required this.val});
+  final bool val;
 }
+
+class GoPreviousChapter extends AppEvent {}
 
 class RuntimeBroker extends AppEvent {
   const RuntimeBroker({required this.position});

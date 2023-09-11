@@ -84,7 +84,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: const Text('Interactive Video'),
+        title: const Text('Non-Linear Video Session'),
       ),
       body: BlocConsumer<AppBloc, AppState>(
         listener: (context, state) async {
@@ -100,46 +100,164 @@ class _MyHomePageState extends State<MyHomePage> {
             await _controller.initialize();
             _controller.play();
           }
+
+          if (state.restartChapter) {
+            _controller.seekTo(Duration.zero);
+            if (mounted) {
+              context.read<AppBloc>().add(const RestartChapter(val: false));
+            }
+          }
         },
         builder: (context, state) {
           return Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               SizedBox(
                 height: 300,
                 width: MediaQuery.of(context).size.width,
-                child: VideoPlayer(_controller),
-              ),
-              if (state.showChoices &&
-                  (state.session?.entities[state.currentIndex].choices ??
-                          <Entity>[])
-                      .isNotEmpty)
-                Row(
-                  children: (state.session!.entities[state.currentIndex])
-                      .choices!
-                      .asMap()
-                      .entries
-                      .map(
-                        (e) => ElevatedButton(
-                          onPressed: () {
-                            context
-                                .read<AppBloc>()
-                                .add(ChoiceSelection(entity: e.value));
-                          },
-                          child: Text(
-                            e.value.title,
-                          ),
+                child: Stack(
+                  children: [
+                    VideoPlayer(_controller),
+                    if (state.showChoices &&
+                        (state.session?.entities[state.currentIndex].choices ??
+                                <Entity>[])
+                            .isNotEmpty)
+                      Positioned.fill(
+                        child: Container(
+                          color: Colors.black54,
+                        ),
+                      ),
+                    if (state.showChoices &&
+                        (state.session?.entities[state.currentIndex].choices ??
+                                <Entity>[])
+                            .isNotEmpty)
+                      Positioned.fill(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: (state
+                                  .session!.entities[state.currentIndex])
+                              .choices!
+                              .asMap()
+                              .entries
+                              .map(
+                                (e) => ElevatedButton(
+                                  onPressed: () {
+                                    context
+                                        .read<AppBloc>()
+                                        .add(ChoiceSelection(entity: e.value));
+                                  },
+                                  child: SizedBox(
+                                    width: 80,
+                                    height: 40,
+                                    child: Center(
+                                      child: Text(
+                                        e.value.title,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              )
+                              .toList(),
                         ),
                       )
-                      .toList(),
+                  ],
                 ),
+              ),
+              SizedBox(
+                height: 20,
+                width: MediaQuery.of(context).size.width,
+                child: Stack(
+                  children: [
+                    Container(
+                      height: 20,
+                      width: MediaQuery.of(context).size.width,
+                      color: Colors.grey,
+                    ),
+                    Container(
+                      height: 20,
+                      width: MediaQuery.of(context).size.width *
+                          (state.currentPosition /
+                              (state.session?.duration ?? 1)),
+                      color: Colors.amber,
+                    ),
+                    ...state.breakpoints
+                        .map(
+                          (e) => Positioned(
+                            left: MediaQuery.of(context).size.width *
+                                (e / (state.session?.duration ?? 1)),
+                            child: Container(
+                              height: 20,
+                              width: 2,
+                              color: Colors.red,
+                            ),
+                          ),
+                        )
+                        .toList(),
+                  ],
+                ),
+              ),
               Padding(
                 padding: const EdgeInsets.all(16),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(state.currentPosition.toString()),
-                    Text(state.currentVideoSeek.toString()),
+                    const Text(
+                      'Session Controlls',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    Row(
+                      children: [
+                        TextButton(
+                          onPressed: () {
+                            context.read<AppBloc>().add(RestartSession());
+                          },
+                          child: const Text(
+                            'Restart Session',
+                            style: TextStyle(
+                              fontSize: 12,
+                            ),
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            context.read<AppBloc>().add(
+                                  const RestartChapter(val: true),
+                                );
+                          },
+                          child: const Text(
+                            'Restart Chapter',
+                            style: TextStyle(
+                              fontSize: 12,
+                            ),
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            context.read<AppBloc>().add(GoPreviousChapter());
+                          },
+                          child: const Text(
+                            'Previous Chapter',
+                            style: TextStyle(
+                              fontSize: 12,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const Text(
+                      'Stats for nerds',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                        'Current Position: ${state.currentPosition.toString()}'),
+                    Text('Est. Session Duration: ${state.session?.duration}'),
+                    Text(
+                        'Current Chapter Seek: ${state.currentVideoSeek.toString()}'),
+                    Text('Breakpoints: ${state.breakpoints.toString()}'),
+                    Text('Show choices: ${state.showChoices}'),
+                    Text(
+                      'Session chapters: ${state.session?.entities.map((e) => e.title).toList().toString()}',
+                    ),
                   ],
                 ),
               ),
