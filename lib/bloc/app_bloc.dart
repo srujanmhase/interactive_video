@@ -76,9 +76,24 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     on<GoPreviousChapter>((event, emit) {
       final currentEntities = List.of(state.session?.entities ?? <Entity>[]);
       currentEntities.removeLast();
+
+      double duration = 0;
+
+      for (int i = 0; i < currentEntities.length; i++) {
+        duration += currentEntities[i].duration;
+      }
+
+      if (currentEntities.last.choices?.isNotEmpty ?? false) {
+        duration += min(currentEntities.last.choices?.first.duration ?? 0,
+            currentEntities.last.choices?.last.duration ?? 0);
+      }
+
       return emit(
         state.copyWith(
-          session: state.session?.copyWith(entities: currentEntities),
+          session: state.session?.copyWith(
+            entities: currentEntities,
+            duration: duration,
+          ),
           currentIndex: state.currentIndex > 0
               ? state.currentIndex - 1
               : state.currentIndex,
